@@ -7,8 +7,7 @@ size = 100
 clahe_parameter = int(255 / 10)  # 10 histograms
 
 
-def np_transform_bgr(a):  # images are in bgr format!!!
-    # Transforms the data into standard rgb form (3, x, x)
+def np_transform_bgr(a):
     r = a[0, :, :]
     g = a[1, :, :]
     b = a[2, :, :]
@@ -44,7 +43,9 @@ def one_hot_image(a):
 
 # resizing the image
 def image_resize(image, size):
-    return cv2.resize(image, size, interpolation=cv2.INTER_NEAREST)
+    return cv2.resize(image,
+                      size,
+                      interpolation=cv2.INTER_NEAREST)
 
 
 def one_trans(img):
