@@ -1,48 +1,45 @@
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
-import torch.optim as optim
 from torch.nn import Linear, GRU, Conv2d, Dropout, MaxPool2d, BatchNorm1d
 from torch.nn.functional import relu, elu, relu6, sigmoid, tanh, softmax
 
 channels = 3
-
 kernel_size = (3, 3)  # <-- Kernel size
 conv_stride = 1  # <-- Stride
 conv_pad = 1  # <-- Padding
-
 # decoder_conv_val
 kernel_size_decoder = (2, 2)
 stride_decoder = 2
 padding_decoder = 0
-
 # output_conv_val
 # in_channels_out = 64
 # out_channels_out = 2
 kernel_size_out = (1, 1)
 stride_out = 1
 padding_out = 0
-
-
 # defining the double convolutional layer for the U-Net
 class double_conv(nn.Module):
     def __init__(self, conv_in_channels, conv_out_channels):
         super().__init__()
 
         # first convolution
-        self.conv_down_1 = Conv2d(in_channels=conv_in_channels,
-                                  out_channels=conv_out_channels,
-                                  kernel_size=kernel_size,
-                                  stride=conv_stride,
-                                  padding=conv_pad)
+        self.conv_down_1 = Conv2d(
+            in_channels=conv_in_channels,
+            out_channels=conv_out_channels,
+            kernel_size=kernel_size,
+            stride=conv_stride,
+            padding=conv_pad,
+        )
         self.b_norm_1 = torch.nn.BatchNorm2d(conv_out_channels)
 
         # second convolution
-        self.conv_down_2 = Conv2d(in_channels=conv_out_channels,
-                                  out_channels=conv_out_channels,
-                                  kernel_size=kernel_size,
-                                  stride=conv_stride,
-                                  padding=conv_pad)
+        self.conv_down_2 = Conv2d(
+            in_channels=conv_out_channels,
+            out_channels=conv_out_channels,
+            kernel_size=kernel_size,
+            stride=conv_stride,
+            padding=conv_pad,
+        )
         self.b_norm_2 = torch.nn.BatchNorm2d(conv_out_channels)
         self.dropout = nn.Dropout(0.2)
 
@@ -75,12 +72,16 @@ class encoder(nn.Module):
 class decoder(nn.Module):
     def __init__(self, conv_in_channels, conv_out_channels):
         super().__init__()
-        self.up = nn.ConvTranspose2d(conv_in_channels,
-                                     conv_out_channels,
-                                     kernel_size=kernel_size_decoder,
-                                     stride=stride_decoder,
-                                     padding=padding_decoder)
-        self.conv_d = double_conv(conv_out_channels + conv_out_channels, conv_out_channels)
+        self.up = nn.ConvTranspose2d(
+            conv_in_channels,
+            conv_out_channels,
+            kernel_size=kernel_size_decoder,
+            stride=stride_decoder,
+            padding=padding_decoder,
+        )
+        self.conv_d = double_conv(
+            conv_out_channels + conv_out_channels, conv_out_channels
+        )
 
     def forward(self, input, skip):
         x = self.up(input)
@@ -93,11 +94,13 @@ class decoder(nn.Module):
 class output_conv(nn.Module):
     def __init__(self, in_channels_out, out_channels_out):
         super().__init__()
-        self.output_cv = Conv2d(in_channels=in_channels_out,
-                                out_channels=out_channels_out,
-                                kernel_size=kernel_size_out,
-                                stride=stride_out,
-                                padding=padding_out)
+        self.output_cv = Conv2d(
+            in_channels=in_channels_out,
+            out_channels=out_channels_out,
+            kernel_size=kernel_size_out,
+            stride=stride_out,
+            padding=padding_out,
+        )
         self.b_norm_out = torch.nn.BatchNorm2d(out_channels_out)
 
     def forward(self, input):
@@ -111,7 +114,7 @@ class output_conv(nn.Module):
 class U_Net_Model(nn.Module):
     def __init__(self):
         super().__init__()
-       # self.dummy_conv = Conv2d(3, 64, 3) for testing purposes
+        # self.dummy_conv = Conv2d(3, 64, 3) for testing purposes
         # four encoder layer
         self.down_1 = encoder(channels, 64)
         self.down_2 = encoder(64, 128)
@@ -127,7 +130,9 @@ class U_Net_Model(nn.Module):
         self.up_4 = decoder(128, 64)
 
         # output layer
-        self.out = output_conv(64, 9)   ### has to be changed if more or less classes are availabel. This setting creates a picture with 9 different classes as output
+        self.out = output_conv(
+            64, 9
+        )  ### has to be changed if more or less classes are availabel. This setting creates a picture with 9 different classes as output
         self.dropout = nn.Dropout(0.1)
         self.sig = nn.Sigmoid()
 
