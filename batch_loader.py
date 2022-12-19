@@ -1,30 +1,25 @@
-import numpy as np
+
 import torch
 from torch.utils.data import DataLoader, random_split
 # imports the prcessed data
 from processing import *
-#print("batch ---------", train_val_image())
-train_one_hot, train_image, train_image_standard, train_image_standard_hot = train_val_image()
-#train_image_standard, train_image_standard_hot = train_val_image()
-
-
-# test date for later use
-test_one_hot = train_one_hot[-10:]
-test_image = train_image[-10:]
-test_image_standard = train_image_standard[-10:]
-test_image_standard_hot = train_image_standard_hot[-10:]
 
 
 
+def image_standard_format(path):
+    train_one_hot, train_image, train_image_standard, train_image_standard_hot = train_val_image(path)
+    return train_one_hot, train_image, train_image_standard, train_image_standard_hot
 
-# defining and splitting the batch sizes
-
-def test_images():
+def test_images(train_one_hot, train_image, train_image_standard, train_image_standard_hot):
+    test_one_hot = train_one_hot[-10:]
+    test_image = train_image[-10:]
+    test_image_standard = train_image_standard[-10:]
+    test_image_standard_hot = train_image_standard_hot[-10:]
     return test_one_hot, test_image, test_image_standard, test_image_standard_hot
 
 
 
-def batch():
+def batch(train_image_standard, train_image_standard_hot):
     batch_size = 9
     train_nr = len(train_image_standard) - int(0.2* len(train_image_standard))
     valid_nr = len(train_image_standard) - train_nr
@@ -47,4 +42,3 @@ def batch():
     print("trainloader length 1", len(trainloader))
     print("validloader length 1", len(validloader))
     return trainloader, validloader
-batch()

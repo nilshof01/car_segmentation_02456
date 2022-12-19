@@ -1,60 +1,15 @@
+from image_processing import *
 import numpy as np
-import cv2
-import random
-
-size = 100
-clahe_parameter = int(255 / 10)  # 10 histograms
-
-def np_transform_bgr(a):
-    # Transforms the data into standard rgb form (3, x, x) , problem is that the np files are given with four channels
-    r = a[0, :, :]
-    g = a[1, :, :]
-    b = a[2, :, :]
-    rgb = np.dstack((r, g, b))
-    return rgb
-
-def np_transform_rgb_inv(img):
-    shape = np.shape(img)
-    new_img = np.zeros(shape[::-1])
-    new_img[0, :, :] = img[:, :, 0]
-    new_img[1, :, :] = img[:, :, 1]
-    new_img[2, :, :] = img[:, :, 2]
-    return new_img.astype("uint8")
+from import_data import *
 
 
-def rgb_img(a):  # images are in bgr format!!!
-    # Transforms the data into standard rgb form (3, x, x)
-    return a[0:3, :, :]
+def train_val_image(image_paths):
+    train_one_hot = [one_hot_image(np.load(i)) for i in image_paths]
+    train_image = [np_transform_bgr(np.load(i)) for i in image_paths]
+    train_image_standard = [np.load(i)[0:3, :, :] for i in image_paths]
+    train_image_standard_hot = [np.expand_dims(np.load(i)[3, :, :], axis=0) for i in image_paths]
+    train_image_standard_hot = [one_trans(x) for x in train_image_standard_hot]
+    return train_one_hot, train_image, train_image_standard, train_image_standard_hot
 
-
-def rgb_grey(a):
-    r = a[0, :, :]
-    g = a[1, :, :]
-    b = a[2, :, :]
-    return 0.2989 * r + 0.5870 * g + 0.1140 * b
-
-
-def one_hot_image(a):
-    # Seperates the one-hot-encoded part of the data
-    return a[3, :, :]
-
-
-# resizing the image
-def image_resize(image, size):
-    return cv2.resize(image, size, interpolation=cv2.INTER_NEAREST)
-
-
-def one_trans(img):
-    new_img = np.zeros((9, np.shape(img)[1], np.shape(img)[2]))
-    for i in range(9):
-        new_img[i, :, :] = (i == img[:, :]).astype(float)
-    return new_img
-
-
-def one_trans_inv(img):
-    new_img = np.zeros(np.shape(img))
-    for i in range(9):
-        new_img[:, :] = img[0, i, :, :] * i
-    return new_img
 
 
