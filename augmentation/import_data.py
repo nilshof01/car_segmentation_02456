@@ -1,10 +1,9 @@
-
 import glob
 from os.path import basename
 
 def image_path(path):
     #image_paths = glob.glob(r"/work/data/*.npy") #Peter
-    image_paths = glob.glob()
+    image_paths = glob.glob(path)
     print(image_paths)
     new_paths2 = []
     wanted = [""]

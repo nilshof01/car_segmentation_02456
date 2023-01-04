@@ -1,7 +1,5 @@
-from image_processing import *
+from augmentation.image_processing import *
 import numpy as np
-from import_data import *
-
 
 def train_val_image(image_paths):
     train_one_hot = [one_hot_image(np.load(i)) for i in image_paths]

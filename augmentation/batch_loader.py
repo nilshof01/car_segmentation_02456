@@ -1,10 +1,7 @@
-
 import torch
 from torch.utils.data import DataLoader, random_split
 # imports the prcessed data
-from processing import *
-
-
+from augmentation.processing import *
 
 def image_standard_format(path):
     train_one_hot, train_image, train_image_standard, train_image_standard_hot = train_val_image(path)

@@ -1,11 +1,5 @@
 import numpy as np
 import cv2
-import random
-from scipy.ndimage import rotate
-
-size = 100
-clahe_parameter = int(255 / 10)  # 10 histograms
-
 
 def np_transform_bgr(a):
     r = a[0, :, :]
